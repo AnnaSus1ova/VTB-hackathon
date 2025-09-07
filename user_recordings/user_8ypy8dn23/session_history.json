@@ -1,0 +1,16 @@
+{
+  "start_time": "2025-09-07T01:20:31.300267",
+  "counter": 0,
+  "recordings": [],
+  "chat_history": [
+    {
+      "type": "avatar",
+      "text": "Здравствуйте! Меня зовут Аватар. Расскажите о вашем опыте работы.",
+      "audio_file": "welcome.mp3",
+      "timestamp": "2025-09-07T01:20:31.301285",
+      "auto_record": true
+    }
+  ],
+  "interview_completed": false,
+  "end_time": "2025-09-07T01:21:05.745376"
+}

@@ -1,0 +1,28 @@
+{
+  "start_time": "2025-09-07T01:40:25.280542",
+  "counter": 1,
+  "recordings": [],
+  "chat_history": [
+    {
+      "type": "avatar",
+      "text": "Здравствуйте! Меня зовут Аватар. Расскажите о вашем опыте работы.",
+      "audio_file": "welcome.mp3",
+      "timestamp": "2025-09-07T01:40:25.282752",
+      "auto_record": true
+    },
+    {
+      "type": "user",
+      "audio_file": "recording_20250907_014038.webm",
+      "timestamp": "2025-09-07T01:40:39.898692"
+    },
+    {
+      "type": "avatar",
+      "text": "Интересно! Какие технологии вы используете?",
+      "audio_file": "question1.mp3",
+      "timestamp": "2025-09-07T01:40:39.898692",
+      "auto_record": true
+    }
+  ],
+  "interview_completed": true,
+  "end_time": "2025-09-07T01:45:38.992906"
+}
