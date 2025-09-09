@@ -612,7 +612,7 @@ from speechtotextemotion.ipynb import speech_to_text_engine
 AUDIO_DIR = Path("audio_responses")
 RECORDINGS_DIR = Path("user_recordings")
 TEXT_DIR = Path("text_transcripts")
-FRONTEND_DIR = Path("/kaggle/input/my-frontend")
+FRONTEND_DIR = Path("/front/frontend")
 
 # === ЛОГИ ===
 logging.basicConfig(level=logging.INFO)
