@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВТБ - Интервью с продукт-дизайнером</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        body.dark-theme {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        .companies-sidebar {
+            width: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 40px);
+        }
+
+        .dark-theme .companies-sidebar {
+            background: #2d2d2d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .companies-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #1e3a8a;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .dark-theme .companies-header {
+            color: #4facfe;
+            border-bottom-color: #404040;
+        }
+        
+        .company-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            cursor: default;
+            transition: all 0.3s;
+            border: 1px solid #f1f3f4;
+        }
+
+        .dark-theme .company-item {
+            border-color: #404040;
+            background: #363636;
+        }
+        
+        .company-item:hover {
+            background: #f0f7ff;
+            transform: translateY(-2px);
+            border-color: #1e3a8a;
+        }
+
+        .dark-theme .company-item:hover {
+            background: #404040;
+            border-color: #4facfe;
+        }
+        
+        .company-item.active {
+            background: #1e3a8a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+            border-color: #1e3a8a;
+        }
+
+        .dark-theme .company-item.active {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .company-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            padding: 3px;
+        }
+
+        .dark-theme .company-logo {
+            background: #404040;
+            border-color: #555;
+        }
+        
+        .company-logo .logo-text {
+            font-weight: bold;
+            font-size: 14px;
+            color: #1e3a8a;
+        }
+
+        .dark-theme .company-logo .logo-text {
+            color: #e0e0e0;
+        }
+        
+        .company-item.active .company-logo {
+            border-color: #fff;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            background: white;
+        }
+
+        .dark-theme .company-item.active .company-logo {
+            background: #fff;
+        }
+        
+        .company-item.active .company-logo .logo-text {
+            color: #1e3a8a;
+        }
+        
+        .company-info {
+            flex: 1;
+        }
+        
+        .company-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+        
+        .company-role {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        .dark-theme .company-role {
+            color: #a0a0a0;
+        }
+        
+        .company-item.active .company-role {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 40px);
+            position: relative;
+        }
+
+        .dark-theme .chat-container {
+            background: #2d2d2d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2d4ba0 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dark-theme .chat-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        
+        .header-left {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .header-center {
+            flex: 2;
+            text-align: center;
+        }
+        
+        .header-right {
+            flex: 1;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .dark-theme .user-avatar {
+            border-color: #404040;
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
+        
+        h3 {
+            font-size: 16px;
+            color: #1e3a8a;
+            margin: 15px 0 10px;
+            font-weight: 600;
+        }
+
+        .dark-theme h3 {
+            color: #4facfe;
+        }
+        
+        .chat-link {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .dark-theme .chat-link {
+            background: #363636;
+            border-bottom-color: #404040;
+        }
+        
+        .link-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 10px;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        .dark-theme .link-input {
+            background: #404040;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        
+        .link-input:focus {
+            border-color: #1e3a8a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .dark-theme .link-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 10px 0;
+        }
+
+        .dark-theme .divider {
+            background: #404040;
+        }
+        
+        .chat-content {
+            overflow-y: auto;
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .dark-theme .chat-content {
+            background: #1a1a1a;
+        }
+        
+        .chat-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .dark-theme .chat-item {
+            border-bottom-color: #404040;
+        }
+        
+        .bank-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1e3a8a;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 4px;
+        }
+
+        .dark-theme .bank-logo {
+            background: #404040;
+            border-color: #4facfe;
+        }
+        
+        .bank-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        
+        .bank-logo .logo-text {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1e3a8a;
+        }
+
+        .dark-theme .bank-logo .logo-text {
+            color: #e0e0e0;
+        }
+        
+        .chat-message-content {
+            flex: 1;
+        }
+        
+        .chat-message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        
+        .bank-name {
+            font-weight: bold;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+        }
+
+        .dark-theme .bank-name {
+            color: #4facfe;
+        }
+        
+        .verified-badge {
+            background: #28a745;
+            color: white;
+            border-radius: 10px;
+            font-size: 10px;
+            padding: 3px 8px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        
+        .chat-date {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .dark-theme .chat-date {
+            color: #a0a0a0;
+        }
+        
+        .chat-message {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .vacancy {
+            font-weight: bold;
+            color: #2c5282;
+            font-size: 15px;
+        }
+
+        .dark-theme .vacancy {
+            color: #63b3ed;
+        }
+        
+        .interview-message {
+            background: white;
+            padding: 20px;
+            border-left: 4px solid #1e3a8a;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-top: 10px;
+        }
+
+        .dark-theme .interview-message {
+            background: #363636;
+            border-left-color: #4facfe;
+        }
+        
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 14px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .dark-theme .timer {
+            border-top-color: #404040;
+            color: #a0a0a0;
+        }
+        
+        /* Стили для статусной строки */
+        .status-bar {
+            background: black;
+            padding: 15px 20px;
+            /* border-bottom: 1px solid #e9ecef; */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* .dark-theme .status-bar {
+            background: #363636;
+            border-bottom-color: #404040;
+        } */
+        
+        .status {
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .status.connected { background: #28a745; color: white; }
+        .status.disconnected { background: #dc3545; color: white; }
+        .status.recording { background: #ff6b6b; color: white; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse { 
+            0% { opacity: 1; } 
+            50% { opacity: 0.5; } 
+            100% { opacity: 1; } 
+        }
+        
+        .user-info {
+            background: #495057;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        /* Стили для сообщений */
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-in;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark-theme .message {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .avatar-message { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            margin-right: auto; 
+            border-bottom-left-radius: 5px; 
+        }
+        
+        .user-message { 
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+            color: white; 
+            margin-left: auto; 
+            border-bottom-right-radius: 5px; 
+            text-align: right; 
+        }
+        
+        .system-message { 
+            background: #6c757d; 
+            color: white; 
+            margin: 15px auto; 
+            text-align: center; 
+            max-width: 90%; 
+            font-size: 14px; 
+            padding: 12px; 
+            border-radius: 8px;
+        }
+        
+        .message-text { 
+            margin-bottom: 10px; 
+            line-height: 1.4; 
+            word-wrap: break-word; 
+            font-size: 15px; 
+        }
+        
+        .message-audio { 
+            width: 100%; 
+            margin-top: 10px; 
+            border-radius: 8px; 
+            background: rgba(255,255,255,0.1); 
+        }
+        
+        .message-time { 
+            font-size: 12px; 
+            opacity: 0.8; 
+            margin-top: 8px; 
+        }
+        
+        .playing-indicator { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            background: #ffd43b; 
+            border-radius: 50%; 
+            margin-right: 8px; 
+            animation: pulse 1s infinite; 
+            vertical-align: middle; 
+        }
+        
+        .audio-control { 
+            margin-top: 10px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .auto-record-indicator { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            background: #ff6b6b; 
+            border-radius: 50%; 
+            margin-right: 8px; 
+            animation: pulse 1s infinite; 
+            vertical-align: middle; 
+        }
+        
+        /* Стили для кнопок управления */
+        .controls { 
+            padding: 20px; 
+            background: white; 
+            border-top: 1px solid #e9ecef; 
+            display: flex; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+
+        .dark-theme .controls {
+            background: #2d2d2d;
+            border-top-color: #404040;
+        }
+        
+        .btn { 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s ease; 
+            min-width: 150px; 
+            font-size: 16px; 
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+            color: white; 
+        }
+        
+        .btn-primary:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4); 
+        }
+        
+        .btn-danger { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); 
+            color: white; 
+        }
+        
+        .btn-danger:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); 
+        }
+        
+        .btn-success { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+            color: white; 
+        }
+        
+        .btn-success:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4); 
+        }
+        
+        .btn:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            transform: none !important; 
+        }
+        
+        /* Модальные окна */
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(0,0,0,0.5); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+        }
+        
+        .modal { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 30px; 
+            max-width: 400px; 
+            width: 90%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            text-align: center; 
+        }
+
+        .dark-theme .modal {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        .modal h3 { 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+
+        .dark-theme .modal h3 {
+            color: #e0e0e0;
+        }
+        
+        .modal-buttons { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+            margin-top: 25px; 
+        }
+        
+        .modal-btn { 
+            padding: 12px 25px; 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            min-width: 100px; 
+        }
+        
+        .modal-btn-confirm { 
+            background: #28a745; 
+            color: white; 
+        }
+        
+        .modal-btn-cancel { 
+            background: #6c757d; 
+            color: white; 
+        }
+        
+        .hidden { 
+            display: none; 
+        }
+
+        /* Стили для режима видеозвонка */
+        .video-call-container {
+            display: none;
+            flex: 1;
+            background: #000;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-call-header {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .call-timer {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .video-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        .avatar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .avatar-container {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container.speaking {
+            border-color: #4facfe;
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+        }
+
+        .avatar-container.speaking::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 30px;
+            border: 2px solid #4facfe;
+            animation: ripple 1.5s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .company-avatar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2d4ba0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+        }
+
+        .candidate-avatar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+        }
+
+        .avatar-name {
+            margin-top: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .sound-waves {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 30px;
+        }
+
+        .wave {
+            width: 4px;
+            background: rgba(79, 172, 254, 0.8);
+            border-radius: 2px;
+            animation: wave 1.5s infinite ease-in-out;
+        }
+
+        .wave:nth-child(2) { animation-delay: 0.2s; height: 20px; }
+        .wave:nth-child(3) { animation-delay: 0.4s; height: 25px; }
+        .wave:nth-child(4) { animation-delay: 0.6s; height: 15px; }
+        .wave:nth-child(5) { animation-delay: 0.8s; height: 20px; }
+
+        @keyframes wave {
+            0%, 100% { height: 10px; }
+            50% { height: 25px; }
+        }
+
+        .call-controls {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .call-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .call-btn-mute {
+            background: #6c757d;
+            color: white;
+        }
+
+        .call-btn-mute:hover {
+            background: #5a6268;
+            transform: scale(1.1);
+        }
+
+        .call-btn-mute.muted {
+            background: #dc3545;
+        }
+
+        .call-btn-end {
+            background: #dc3545;
+            color: white;
+        }
+
+        .call-btn-end:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        .call-btn-record {
+            background: #28a745;
+            color: white;
+        }
+
+        .call-btn-record:hover {
+            background: #218838;
+            transform: scale(1.1);
+        }
+
+        .call-btn-record.recording {
+            background: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(220, 53, 69, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @media (max-width: 1024px) {
+            .companies-sidebar {
+                width: 350px;
+            }
+
+            .avatar-container {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .companies-sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+                max-height: 200px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .header-right {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .theme-toggle {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .video-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .avatar-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .company-avatar,
+            .candidate-avatar {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="companies-sidebar">
+        <div class="chat-link">
+            <h3>Присоединиться к новому чату:</h3>
+            <input type="text" class="link-input" placeholder="Вставьте ссылку">
+        </div>
+        <div class="companies-header">Компании</div>
+        
+        <div class="company-item active">
+            <div class="company-logo">
+                <div class="logo-text">ВТБ</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">ВТБ</div>
+                <div class="company-role">Product designer</div>
+            </div>
+        </div>
+        
+        <div class="company-item">
+            <div class="company-logo">
+                <div class="logo-text">СБ</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">Сбербанк</div>
+                <div class="company-role">UX designer</div>
+            </div>
+        </div>
+        
+        <div class="company-item">
+            <div class="company-logo">
+                <div class="logo-text">Т</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">Тинькофф</div>
+                <div class="company-role">UI designer</div>
+            </div>
+        </div>
+        
+        <div class="company-item">
+            <div class="company-logo">
+                <div class="logo-text">ГПБ</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">Газпромбанк</div>
+                <div class="company-role">Product designer</div>
+            </div>
+        </div>
+        
+        <div class="company-item">
+            <div class="company-logo">
+                <div class="logo-text">А</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">Альфа-Банк</div>
+                <div class="company-role">UX researcher</div>
+            </div>
+        </div>
+        
+        <div class="company-item">
+            <div class="company-logo">
+                <div class="logo-text">Я</div>
+            </div>
+            <div class="company-info">
+                <div class="company-name">Яндекс</div>
+                <div class="company-role">Product designer</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-left">
+            </div>
+            <div class="header-center">
+                <h1>Hirai</h1>
+                <h2>Чат с AI HR</h2>
+            </div>
+            
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i> Ночной режим
+                </button>
+                <div class="user-avatar" title="Профиль пользователя">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div class="status-bar">
+            <div class="status disconnected" id="status">Отключено</div>
+            <div class="user-info" id="userInfo">ID: Не назначен</div>
+        </div> -->
+        
+        <div class="chat-content">
+            <div class="chat-item">
+                <div class="bank-logo">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0iIzFlM2E4YSIvPjxwYXRoIGQ9Ik00MCAzMEg2MFY3MEg0MFYzMEpNNTUgNjVINTBWNTVINDBWNTBINDBINDUgTDUwIDUwVjY1WiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=" alt="VTB">
+                </div>
+                <div class="chat-message-content">
+                    <div class="chat-message-header">
+                        <span class="bank-name">ВТБ <span class="verified-badge">Проверено</span></span>
+                        <span class="chat-date">8 сентября</span>
+                    </div>
+                    <div class="interview-message">
+                        <div class="chat-message">
+                            <strong>Добрый день! Я виртуальный интервьюер ВТБ. Мы обсудим ваш опыт и навыки в продуктовом дизайне в небольшом аудиозаочке. Интервью займёт около 15 минут.</strong>
+                        </div>
+                        <div class="chat-message">
+                            После каждого вопроса ваш микрофон будет включаться автоматически. Когда закончите ответ, нажмите кнопку «Отправить».
+                        </div>
+                        <div class="chat-message">
+                            Готовы начать?
+                        </div>
+                        <!-- <div class="timer">
+                            <span>00:00</span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div id="messages"></div>
+        </div>
+        <style>
+        .video-call-container {
+            display: none;
+            flex: 1;
+            background: #000;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-call-header {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .call-timer {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .video-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            gap: 100px; /* Увеличили расстояние между аватарками */
+        }
+
+        .avatar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .avatar-container {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%; /* Сделали аватарки круглыми */
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container.speaking {
+            border-color: #4facfe;
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+        }
+
+        .avatar-container.speaking::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%; /* Круглая обводка для круглых аватаров */
+            border: 2px solid #4facfe;
+            animation: ripple 1.5s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .company-avatar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2d4ba0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+        }
+
+        .candidate-avatar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+        }
+
+        .avatar-name {
+            margin-top: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .sound-waves {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 30px;
+        }
+
+        .wave {
+            width: 4px;
+            background: rgba(79, 172, 254, 0.8);
+            border-radius: 2px;
+            animation: wave 1.5s infinite ease-in-out;
+        }
+
+        .wave:nth-child(2) { animation-delay: 0.2s; height: 20px; }
+        .wave:nth-child(3) { animation-delay: 0.4s; height: 25px; }
+        .wave:nth-child(4) { animation-delay: 0.6s; height: 15px; }
+        .wave:nth-child(5) { animation-delay: 0.8s; height: 20px; }
+
+        @keyframes wave {
+            0%, 100% { height: 10px; }
+            50% { height: 25px; }
+        }
+
+        /* Убрали блок call-controls с кнопками */
+        .call-controls {
+            display: none;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: black;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @media (max-width: 1024px) {
+            .companies-sidebar {
+                width: 350px;
+            }
+
+            .avatar-container {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .video-container {
+                gap: 60px; /* Уменьшили расстояние на мобильных устройствах */
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .companies-sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+                max-height: 200px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .header-right {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .theme-toggle {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .video-container {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .avatar-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .company-avatar,
+            .candidate-avatar {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HTML-код остается без изменений -->
+    
+    <!-- Контейнер для видеозвонка -->
+    <div class="video-call-container" id="videoCallContainer">
+        <div class="video-call-header">
+            <!-- <div class="call-timer" id="callTimer">00:00</div> -->
+            <!-- <div class="call-status">В процессе интервью</div> -->
+            <div class="status-bar">
+            <!-- <div class="call-timer" id="callTimer">00:00</div> -->
+            <div class="status disconnected" id="status">Отключено</div>
+            <!-- <div class="user-info" id="userInfo">ID: Не назначен</div> -->
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <div class="avatar-wrapper">
+                <div class="avatar-container" id="companyAvatar">
+                    <div class="company-avatar">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="sound-waves" id="companyWaves">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
+                </div>
+                <div class="avatar-name">ВТБ Интервьюер</div>
+            </div>
+            
+            <div class="avatar-wrapper">
+                <div class="avatar-container" id="candidateAvatar">
+                    <div class="candidate-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="sound-waves" id="candidateWaves">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
+                </div>
+                <div class="avatar-name">Кандидат</div>
+            </div>
+        </div>
+        
+        <div class="recording-indicator" id="recordingIndicator">
+            <!-- <div class="recording-dot"></div> -->
+            <!-- <span>Идёт запись</span> -->
+        </div>
+        
+        <!-- Этот блок теперь скрыт через CSS -->
+        <div class="call-controls">
+            <button class="call-btn call-btn-mute" id="muteBtn">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button class="call-btn call-btn-record" id="recordBtn">
+                <i class="fas fa-record-vinyl"></i>
+            </button>
+            <button class="call-btn call-btn-end" id="endCallBtn">
+                <i class="fas fa-phone-slash"></i>
+            </button>
+        </div>
+    </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startInterview()" id="startBtn" disabled>Начать интервью</button>
+            <button class="btn btn-danger" onclick="stopRecording()" id="stopBtn" disabled>Остановить запись</button>
+            <button class="btn btn-danger" onclick="showEndInterviewModal()" id="endBtn" disabled>Завершить интервью</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения завершения -->
+    <div class="modal-overlay hidden" id="confirmModal">
+        <div class="modal">
+            <h3>Вы уверены, что хотите завершить интервью?</h3>
+            <p>После завершения вы не сможете продолжить диалог с аватаром.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="endInterview()">Да, завершить</button>
+                <button class="modal-btn modal-btn-cancel" onclick="hideEndInterviewModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно успешного завершения -->
+    <div class="modal-overlay hidden" id="successModal">
+        <div class="modal">
+            <h3>✅ Интервью успешно завершено!</h3>
+            <p>Спасибо за участие. Все записи сохранены.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="hideSuccessModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const status = document.getElementById('status');
+        const userInfo = document.getElementById('userInfo');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const endBtn = document.getElementById('endBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const successModal = document.getElementById('successModal');
+        const themeToggle = document.getElementById('themeToggle');
+        const videoCallContainer = document.getElementById('videoCallContainer');
+        const chatContent = document.querySelector('.chat-content');
+        const callTimer = document.getElementById('callTimer');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const recordBtn = document.getElementById('recordBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const endCallBtn = document.getElementById('endCallBtn');
+        const companyAvatar = document.getElementById('companyAvatar');
+        const candidateAvatar = document.getElementById('candidateAvatar');
+        const companyWaves = document.getElementById('companyWaves');
+        const candidateWaves = document.getElementById('candidateWaves');
+        
+        let mediaRecorder;
+        let audioChunks = [];
+        let ws = null;
+        let candidateId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let messageCount = 0;
+        let currentPlayingAudio = null;
+        let isAutoRecording = false;
+        let interviewCompleted = false;
+        let isDarkTheme = false;
+        let callTime = 0;
+        let callTimerInterval = null;
+        let isMuted = false;
+        let isInVideoCallMode = false;
+        let isCompanySpeaking = false;
+        let isCandidateSpeaking = false;
+
+        // Функция переключения темы
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('dark-theme', isDarkTheme);
+            
+            if (isDarkTheme) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Дневной режим';
+                themeToggle.title = 'Переключить на дневной режим';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Ночной режим';
+                themeToggle.title = 'Переключить на ночной режим';
+            }
+            
+            localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+        }
+
+        // Загрузка сохраненной темы
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                isDarkTheme = true;
+                document.body.classList.add('dark-theme');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Дневной режим';
+            }
+        }
+        
+        function updateStatus(message, type = 'disconnected') {
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+        
+        function stopCurrentAudio() {
+            if (currentPlayingAudio) {
+                currentPlayingAudio.pause();
+                currentPlayingAudio = null;
+            }
+        }
+        
+        function addMessage(text, type, audioFile = null, timestamp = null, autoPlay = false, autoRecord = false) {
+            messageCount++;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.id = `message-${messageCount}`;
+            
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = text;
+            messageDiv.appendChild(textDiv);
+            
+            if (audioFile) {
+                const audioContainer = document.createElement('div');
+                audioContainer.className = 'audio-control';
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.style.width = '100%';
+                audio.src = type === 'avatar' ? '/audio/' + audioFile : '/recordings/' + candidateId + '/' + audioFile;
+                audioContainer.appendChild(audio);
+                messageDiv.appendChild(audioContainer);
+                
+                if (type === 'avatar' && autoPlay) {
+                    setTimeout(() => playAvatarAudio(audio, messageDiv, autoRecord), 300);
+                }
+            }
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = timestamp || new Date().toLocaleTimeString();
+            messageDiv.appendChild(timeDiv);
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return messageDiv;
+        }
+        
+        function playAvatarAudio(audioElement, messageDiv, autoRecord) {
+            if (interviewCompleted) return;
+            
+            stopCurrentAudio();
+            currentPlayingAudio = audioElement;
+            
+            // Показываем анимацию говорящего для компании
+            setCompanySpeaking(true);
+            
+            audioElement.play().catch(error => {
+                console.log('Автовоспроизведение заблокировано:', error);
+            });
+            
+            audioElement.onended = () => {
+                setCompanySpeaking(false);
+                currentPlayingAudio = null;
+                
+                if (autoRecord && !isAutoRecording && !interviewCompleted) {
+                    setTimeout(() => {
+                        startRecording();
+                        setCandidateSpeaking(true);
+                        addSystemMessage('Автоматическая запись запущена');
+                    }, 500);
+                }
+            };
+        }
+        
+        function addSystemMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system-message';
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = text;
+            messageDiv.appendChild(textDiv);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Функция для установки состояния говорящего для компании
+        function setCompanySpeaking(speaking) {
+            isCompanySpeaking = speaking;
+            if (speaking) {
+                companyAvatar.classList.add('speaking');
+                companyWaves.style.display = 'flex';
+            } else {
+                companyAvatar.classList.remove('speaking');
+                companyWaves.style.display = 'none';
+            }
+        }
+        
+        // Функция для установки состояния говорящего для кандидата
+        function setCandidateSpeaking(speaking) {
+            isCandidateSpeaking = speaking;
+            if (speaking) {
+                candidateAvatar.classList.add('speaking');
+                candidateWaves.style.display = 'flex';
+            } else {
+                candidateAvatar.classList.remove('speaking');
+                candidateWaves.style.display = 'none';
+            }
+        }
+        
+        // Функция для запуска интервью (переход в режим видеозвонка)
+        function startInterview() {
+            if (interviewCompleted) return;
+            
+            // Скрываем чат и показываем интерфейс видеозвонка
+            chatContent.style.display = 'none';
+            videoCallContainer.style.display = 'flex';
+            isInVideoCallMode = true;
+            
+            // Обновляем статус
+            updateStatus('Интервью началось', 'connected');
+            addSystemMessage('Интервью началось. Переход в режим видеозвонка.');
+            
+            // Запускаем таймер звонка
+            startCallTimer();
+            
+            // Начинаем запись
+            startRecording();
+            
+            // Показываем индикатор записи
+            recordingIndicator.style.display = 'flex';
+            
+            // Обновляем доступность кнопок
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // Подключаем WebSocket
+            connectWebSocket();
+        }
+        
+        // Функция запуска таймера звонка
+        function startCallTimer() {
+            callTime = 0;
+            clearInterval(callTimerInterval);
+            callTimerInterval = setInterval(() => {
+                callTime++;
+                const minutes = Math.floor(callTime / 60);
+                const seconds = callTime % 60;
+                callTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        // Функция остановки таймера звонка
+        function stopCallTimer() {
+            clearInterval(callTimerInterval);
+        }
+        
+        async function startRecording() {
+            if (interviewCompleted) return;
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: { channelCount: 1, sampleRate: 16000, sampleSize: 16, echoCancellation: true, noiseSuppression: true } 
+                });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+                audioChunks = [];
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) audioChunks.push(event.data);
+                };
+                mediaRecorder.start(1000);
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                isAutoRecording = true;
+                updateStatus('Запись...', 'recording');
+                addSystemMessage('Запись начата');
+                
+                // Показываем анимацию говорящего для кандидата
+                setCandidateSpeaking(true);
+                
+                // Обновляем кнопку записи в режиме видеозвонка
+                if (isInVideoCallMode) {
+                    recordBtn.classList.add('recording');
+                    recordBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                }
+            } catch (error) {
+                console.error('Ошибка доступа к микрофону:', error);
+                addSystemMessage('Ошибка доступа к микрофону');
+                updateStatus('Ошибка', 'disconnected');
+            }
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                mediaRecorder.onstop = async () => {
+                    if (audioChunks.length > 0) {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            try {
+                                const arrayBuffer = await audioBlob.arrayBuffer();
+                                ws.send(arrayBuffer);
+                                addSystemMessage('Аудио отправлено');
+                            } catch (error) {
+                                console.error('Ошибка отправки аудио:', error);
+                                addSystemMessage('Ошибка отправки аудио');
+                            }
+                        } else {
+                            addSystemMessage('Нет подключения к серверу');
+                        }
+                    }
+                };
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                isAutoRecording = false;
+                updateStatus('Подключено', 'connected');
+                addSystemMessage('Запись остановлена');
+                
+                // Скрываем анимацию говорящего для кандидата
+                setCandidateSpeaking(false);
+                
+                // Обновляем кнопку записи в режиме видеозвонка
+                if (isInVideoCallMode) {
+                    recordBtn.classList.remove('recording');
+                    recordBtn.innerHTML = '<i class="fas fa-record-vinyl"></i>';
+                }
+            }
+        }
+        
+        function connectWebSocket() {
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const host = window.location.host;
+                ws = new WebSocket(`${protocol}//${host}/ws/interview/${candidateId}`);
+                ws.onopen = () => {
+                    updateStatus('Подключено', 'connected');
+                    startBtn.disabled = false;
+                    endBtn.disabled = false;
+                    userInfo.textContent = 'ID: ' + candidateId;
+                    addSystemMessage('Подключено к серверу');
+                };
+                ws.onmessage = (event) => {
+                    try {
+                        if (typeof event.data === 'string') {
+                            const data = JSON.parse(event.data);
+                            if (data.type === 'history') {
+                                if (data.messages && data.messages.length > 0) {
+                                    data.messages.forEach(msg => {
+                                        addMessage(
+                                            msg.text || (msg.type === 'user' ? 'Аудиосообщение' : 'Ответ аватара'),
+                                            msg.type,
+                                            msg.audio_file,
+                                            new Date(msg.timestamp).toLocaleTimeString(),
+                                            false,
+                                            msg.auto_record || false
+                                        );
+                                    });
+                                    addSystemMessage(`Загружено ${data.messages.length} сообщений`);
+                                }
+                            } else if (data.type === 'avatar') {
+                                addMessage(
+                                    data.text, 
+                                    'avatar', 
+                                    data.audio_file, 
+                                    new Date(data.timestamp).toLocaleTimeString(), 
+                                    data.auto_play || false,
+                                    data.auto_record || false
+                                );
+                            } else if (data.type === 'user') {
+                                addMessage(
+                                    'Аудиосообщение', 
+                                    'user', 
+                                    data.audio_file, 
+                                    new Date(data.timestamp).toLocaleTimeString(), 
+                                    false,
+                                    false
+                                );
+                            } else if (data.type === 'system') {
+                                addSystemMessage(data.message);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Ошибка обработки сообщения:', e);
+                    }
+                };
+                ws.onclose = () => {
+                    updateStatus('Отключено', 'disconnected');
+                    startBtn.disabled = true;
+                    stopBtn.disabled = true;
+                    endBtn.disabled = true;
+                    addSystemMessage('Соединение закрыто');
+                };
+                ws.onerror = (error) => {
+                    updateStatus('Ошибка', 'disconnected');
+                    addSystemMessage('Ошибка соединения');
+                    console.error('WebSocket error:', error);
+                };
+            } catch (error) {
+                addSystemMessage('Ошибка создания подключения');
+                updateStatus('Ошибка', 'disconnected');
+            }
+        }
+        
+        function showEndInterviewModal() {
+            confirmModal.classList.remove('hidden');
+        }
+        
+        function hideEndInterviewModal() {
+            confirmModal.classList.add('hidden');
+        }
+        
+        function showSuccessModal() {
+            successModal.classList.remove('hidden');
+        }
+        
+        function hideSuccessModal() {
+            successModal.classList.add('hidden');
+        }
+        
+        function endInterview() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'end_interview'
+                }));
+                interviewCompleted = true;
+                hideEndInterviewModal();
+                showSuccessModal();
+                endBtn.disabled = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = true;
+                
+                // Останавливаем запись, если она активна
+                if (isAutoRecording) {
+                    stopRecording();
+                }
+                
+                // Останавливаем таймер звонка
+                stopCallTimer();
+                
+                addSystemMessage('Интервью завершено. Микрофон отключен.');
+                updateStatus('Завершено', 'disconnected');
+                
+                // Возвращаемся к обычному режиму чата
+                if (isInVideoCallMode) {
+                    chatContent.style.display = 'block';
+                    videoCallContainer.style.display = 'none';
+                    isInVideoCallMode = false;
+                }
+            }
+        }
+        
+        // Обработчик для выбора компании
+        // document.querySelectorAll('.company-item').forEach(item => {
+        //     item.addEventListener('click', function() {
+        //         document.querySelectorAll('.company-item').forEach(i => i.classList.remove('active'));
+        //         this.classList.add('active');
+        //     });
+        // });
+        
+        // Обработчики для кнопок в режиме видеозвонка
+        muteBtn.addEventListener('click', function() {
+            isMuted = !isMuted;
+            if (isMuted) {
+                this.classList.add('muted');
+                this.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+            } else {
+                this.classList.remove('muted');
+                this.innerHTML = '<i class="fas fa-microphone"></i>';
+            }
+            // Здесь должна быть логика отключения/включения микрофона
+        });
+        
+        recordBtn.addEventListener('click', function() {
+            if (isAutoRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
+        
+        endCallBtn.addEventListener('click', function() {
+            showEndInterviewModal();
+        });
+        
+        window.addEventListener('load', function() {
+            addSystemMessage('Добро пожаловать! Нажмите "Начать интервью" чтобы начать.');
+            loadTheme();
+            
+            // Автоматически активируем кнопку "Начать интервью"
+            startBtn.disabled = false;
+        });
+        
+        // Инициализация темы
+        themeToggle.addEventListener('click', toggleTheme);
+    </script>
+</body>
+</html>

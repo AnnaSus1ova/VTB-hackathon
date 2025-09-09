@@ -25,9 +25,16 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 # You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-DATASET_PATH = "/kaggle/input/for-llama"
-OUT_CSV = "/kaggle/working/resume_vacancy_match_improved_fixed.csv"
+DATASET_PATH = "./VTB hackaton/kaggle/input/for-llama"
+OUT_CSV = "./VTB hackaton/kaggle/working/resume_vacancy_match_improved_fixed.csv"
 TARGET_DIM = 512 
+
+VEC_DIR = "./candidate_vectors"  # Папка для векторов кандидатов
+SUMMARY_DIR = "./candidates_summary"  # Папка для summary
+
+# Создайте папки
+os.makedirs(VEC_DIR, exist_ok=True)
+os.makedirs(SUMMARY_DIR, exist_ok=True)
 
 def read_docx_paragraphs(path):
     try:
@@ -208,51 +215,48 @@ def normalize_meta_val(x, low=0.0, high=1.0):
 def build_candidate_vector(resume_text, desc_text=None, summary_text=None,
                            label_confidence=0.0, similarity=0.0, combined=0.0,
                            emb_model=get_emb, target_dim=TARGET_DIM):
+    
+    # Определяем устройство
+    current_device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    # Получаем эмбеддинги и явно указываем устройство
+    r_emb = emb_model(resume_text).to(current_device)
+    d_emb = emb_model(desc_text).to(current_device) if desc_text else torch.zeros_like(r_emb).to(current_device)
+    s_emb = emb_model(summary_text).to(current_device) if summary_text else torch.zeros_like(r_emb).to(current_device)
 
-    r_emb = emb_model(resume_text).to(device)
-    d_emb = emb_model(desc_text) if desc_text else torch.zeros_like(r_emb)
-    s_emb = emb_model(summary_text) if summary_text else torch.zeros_like(r_emb)
-    d_emb = d_emb.to(device)
-    s_emb = s_emb.to(device)
-
-
+    # Веса для комбинирования
     w_r, w_d, w_s = 0.6, 0.2, 0.2
-    combined_emb = w_r * r_emb + w_d * d_emb + w_s * s_emb  # still size D
+    combined_emb = w_r * r_emb + w_d * d_emb + w_s * s_emb
 
+    # Мета-данные
     meta = torch.tensor([
         normalize_meta_val(label_confidence, 0.0, 1.0),
         normalize_meta_val(similarity, 0.0, 1.0),
         normalize_meta_val(combined, 0.0, 1.0)
-    ], device=device, dtype=combined_emb.dtype)
+    ], device=current_device, dtype=combined_emb.dtype)
 
+    # Повторяем мета-данные для совместимости размеров
+    meta_repeated = meta.repeat(combined_emb.shape[0] // len(meta) + 1)[:combined_emb.shape[0]]
+    full = torch.cat([combined_emb, meta_repeated], dim=0)
 
-    meta_repeated = meta.repeat(int(combined_emb.shape[0] / len(meta)) + 1)[:combined_emb.shape[0]].to(device)
-    full = torch.cat([combined_emb, meta_repeated], dim=0)  # size ~ D + D ==> 2D (в зависимости от реализации)
-
-    # 5) Проекция в TARGET_DIM через SVD-PCA если D > target, иначе линейно уменьшить
-    full = full.unsqueeze(0)  # (1, N)
+    # Проекция в target_dim
+    full = full.unsqueeze(0)
     N = full.shape[1]
+    
     if N > target_dim:
-        # простая проекция через SVD (PCA)
-        # центрируем
-        M = full - full.mean(dim=1, keepdim=True)
-        # SVD
         try:
+            M = full - full.mean(dim=1, keepdim=True)
             U, S, Vt = torch.linalg.svd(M, full_matrices=False)
-            # берем первые target_dim компонент
             proj = (M @ Vt.T[:, :target_dim]).squeeze(0)
         except Exception:
-            # fallback — просто линейная редукция через slice (маловероятно)
             proj = M.squeeze(0)[:target_dim]
     else:
-        # если N <= target_dim: дополним нулями
-        proj = torch.zeros(target_dim, device=device, dtype=full.dtype)
+        proj = torch.zeros(target_dim, device=current_device, dtype=full.dtype)
         proj[:N] = full.squeeze(0)
 
-    # 6) Нормализация L2
+    # Нормализация
     proj = proj / (proj.norm(p=2) + 1e-9)
 
-    # 7) привести к numpy float32 и вернуть
     return proj.cpu().numpy().astype(np.float32)
 
 # -------------------------
@@ -452,128 +456,5 @@ for idx, row in df.iterrows():
 # --- Сохраняем в CSV ---
 df.to_csv("results_with_summary.csv", index=False, encoding="utf-8-sig")
 print("\n📄 Итог сохранён в results_with_summary.csv")
-
-
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import numpy as np
-import docx
-
-# === 1. Загружаем модель ===
-model_path = "/kaggle/input/my_model/pytorch/default/7"
-
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(
-    model_path,
-    torch_dtype=torch.float16,
-    device_map="auto"
-)
-
-# === 2. Загружаем вектор кандидата ===
-vec_path = "/kaggle/working/candidate_vectors/Resume 2 Specialist IT.docx.npy"
-candidate_vector = np.load(vec_path)
-vector_text = " ".join([f"{x:.4f}" for x in candidate_vector[:50]])  # первые 50 чисел
-
-# === 3. Загружаем описание вакансии ===
-job_doc_path = "/kaggle/input/for-llama/Description of Specialist IT.docx"
-doc = docx.Document(job_doc_path)
-job_description = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
-
-# === 4. Хранилище истории ===
-chat_history = []   # список реплик [(роль, текст)]
-summary = ""        # сжатое резюме прошлых сообщений
-
-def build_prompt():
-    """Формирует общий prompt для модели с учётом истории, summary и вакансии"""
-    history_text = ""
-    for role, text in chat_history[-6:]:  # последние 6 реплик
-        history_text += f"{role.upper()}: {text}\n"
-
-    prompt = f"""
-        Ты HR-ассистент, проводишь собеседование.
-        
-        Описание вакансии:
-        {job_description}
-        
-        У тебя есть часть векторного представления кандидата:
-        {vector_text}
-        
-        Краткое содержание предыдущей беседы:
-        {summary}
-        
-        История последних сообщений:
-        {history_text}
-        
-        Задача: сгенерируй следующий осмысленный вопрос кандидату на русском языке, проверяя соответствие его опыта требованиям вакансии.
-    """
-    
-    return prompt
-
-def ask_model(prompt):
-    """Отправляет запрос в модель и возвращает текст"""
-    messages = [
-        {"role": "system", "content": "Ты — HR для проведения собеседований."},
-        {"role": "user", "content": prompt}
-    ]
-    inputs = tokenizer.apply_chat_template(messages, return_tensors="pt").to(model.device)
-
-    with torch.no_grad():
-        output = model.generate(
-            inputs,
-            max_new_tokens=300,
-            temperature=0.7,
-            top_p=0.9
-        )
-    decoded = tokenizer.decode(output[0], skip_special_tokens=True)
-    return decoded
-
-# === 5. Имитация начала интервью ===
-chat_history.append(("HR", "Здравствуйте! Давайте начнём собеседование."))
-chat_history.append(("CANDIDATE", "Здравствуйте! Да, я готов."))
-
-prompt = build_prompt()
-question = ask_model(prompt)
-
-print("Первый вопрос (по вакансии):\n", question)
-
-# === 2. Загружаем вектор кандидата ===
-vec_path = "/kaggle/working/candidate_vectors/Resume 2 Specialist IT.docx.npy"
-candidate_vector = np.load(vec_path)
-
-# === 3. Переводим в текстовый prompt ===
-# (Мы не можем напрямую «скормить» numpy, поэтому описываем его как текст)
-vector_text = " ".join([f"{x:.4f}" for x in candidate_vector[:50]])  # первые 50 чисел для краткости
-
-prompt = f"""
-Ты HR-ассистент. У тебя есть векторное представление кандидата (часть данных):
-
-{vector_text}
-
-На основе этого, представь, что ты проводишь собеседование. 
-Сгенерируй 10 осмысленных вопросов кандидату о его опыте, навыках и мотивации.
-"""
-
-# === 4. Имитация чата ===
-messages = [
-    {"role": "system", "content": "Ты — помощник HR для проведения собеседований."},
-    {"role": "user", "content": prompt + "\n\nПожалуйста, ответь на русском языке."}
-]
-
-inputs = tokenizer.apply_chat_template(messages, return_tensors="pt").to(model.device)
-
-# === 5. Генерация ===
-with torch.no_grad():
-    output = model.generate(
-        inputs,
-        max_new_tokens=500,
-        temperature=0.7,
-        top_p=0.9
-    )
-
-decoded = tokenizer.decode(output[0], skip_special_tokens=True)
-
-# Добавим контроль, чтобы в финале был русский текст
-print("Сгенерируй 10 осмысленных вопросов кандидату о его опыте, навыках и мотивации (на русском языке):\n")
-print(decoded)
 
 

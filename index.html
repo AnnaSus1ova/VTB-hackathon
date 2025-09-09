@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HR Avatar Interview</title>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; height: 90vh; display: flex; flex-direction: column; }
+        .header { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; text-align: center; }
+        .header h1 { margin-bottom: 5px; font-size: 24px; }
+        .status-bar { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; }
+        .status { font-weight: 500; padding: 8px 15px; border-radius: 20px; font-size: 14px; }
+        .status.connected { background: #28a745; color: white; }
+        .status.disconnected { background: #dc3545; color: white; }
+        .status.recording { background: #ff6b6b; color: white; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .messages-container { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; }
+        #messages { height: 100%; overflow-y: auto; }
+        .message { margin-bottom: 20px; padding: 15px; border-radius: 15px; max-width: 80%; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .avatar-message { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-right: auto; border-bottom-left-radius: 5px; }
+        .user-message { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; margin-left: auto; border-bottom-right-radius: 5px; text-align: right; }
+        .system-message { background: #6c757d; color: white; margin: 15px auto; text-align: center; max-width: 90%; font-size: 14px; padding: 10px; }
+        .message-text { margin-bottom: 10px; line-height: 1.4; word-wrap: break-word; font-size: 15px; }
+        .message-audio { width: 100%; margin-top: 10px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+        .message-time { font-size: 12px; opacity: 0.8; margin-top: 8px; }
+        .controls { padding: 20px; background: white; border-top: 1px solid #e9ecef; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 15px 30px; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; min-width: 150px; font-size: 16px; }
+        .btn-primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white; }
+        .btn-danger:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); }
+        .btn-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .btn-success:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+        .user-info { background: #495057; color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; }
+        .playing-indicator { display: inline-block; width: 12px; height: 12px; background: #ffd43b; border-radius: 50%; margin-right: 8px; animation: pulse 1s infinite; vertical-align: middle; }
+        .audio-control { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+        .auto-record-indicator { display: inline-block; width: 12px; height: 12px; background: #ff6b6b; border-radius: 50%; margin-right: 8px; animation: pulse 1s infinite; vertical-align: middle; }
+        
+        /* Модальные окна */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal { background: white; border-radius: 15px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; }
+        .modal h3 { margin-bottom: 20px; color: #333; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
+        .modal-btn { padding: 12px 25px; border: none; border-radius: 20px; cursor: pointer; font-weight: 600; min-width: 100px; }
+        .modal-btn-confirm { background: #28a745; color: white; }
+        .modal-btn-cancel { background: #6c757d; color: white; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HR Avatar Interview</h1>
+            <p>Проведите собеседование с AI аватаром</p>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status disconnected" id="status">Отключено</div>
+            <div class="user-info" id="userInfo">ID: Не назначен</div>
+        </div>
+        
+        <div class="messages-container">
+            <div id="messages"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-success" onclick="connectWebSocket()" id="connectBtn">Подключиться</button>
+            <button class="btn btn-primary" onclick="startRecording()" id="startBtn" disabled>Начать запись</button>
+            <button class="btn btn-danger" onclick="stopRecording()" id="stopBtn" disabled>Остановить запись</button>
+            <button class="btn btn-danger" onclick="showEndInterviewModal()" id="endBtn" disabled>Завершить интервью</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения завершения -->
+    <div class="modal-overlay hidden" id="confirmModal">
+        <div class="modal">
+            <h3>Вы уверены, что хотите завершить интервью?</h3>
+            <p>После завершения вы не сможете продолжить диалог с аватаром.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="endInterview()">Да, завершить</button>
+                <button class="modal-btn modal-btn-cancel" onclick="hideEndInterviewModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно успешного завершения -->
+    <div class="modal-overlay hidden" id="successModal">
+        <div class="modal">
+            <h3>✅ Интервью успешно завершено!</h3>
+            <p>Спасибо за участие. Все записи сохранены.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="hideSuccessModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const status = document.getElementById('status');
+        const userInfo = document.getElementById('userInfo');
+        const connectBtn = document.getElementById('connectBtn');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const endBtn = document.getElementById('endBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const successModal = document.getElementById('successModal');
+        
+        let mediaRecorder;
+        let audioChunks = [];
+        let ws = null;
+        let candidateId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let messageCount = 0;
+        let currentPlayingAudio = null;
+        let isAutoRecording = false;
+        let interviewCompleted = false;
+        
+        function updateStatus(message, type = 'disconnected') {
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+        
+        function stopCurrentAudio() {
+            if (currentPlayingAudio) {
+                currentPlayingAudio.pause();
+                currentPlayingAudio = null;
+            }
+            document.querySelectorAll('.playing-indicator').forEach(indicator => {
+                indicator.style.background = '#ffd43b';
+                indicator.title = '';
+            });
+        }
+        
+        function addMessage(text, type, audioFile = null, timestamp = null, autoPlay = false, autoRecord = false) {
+            messageCount++;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.id = `message-${messageCount}`;
+            
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            
+            if (type === 'avatar' && autoPlay) {
+                const indicator = document.createElement('span');
+                indicator.className = 'playing-indicator';
+                indicator.title = 'Воспроизводится';
+                textDiv.appendChild(indicator);
+            }
+            
+            if (type === 'avatar' && autoRecord) {
+                const recordIndicator = document.createElement('span');
+                recordIndicator.className = 'auto-record-indicator';
+                recordIndicator.title = 'Автозапись после завершения';
+                textDiv.appendChild(recordIndicator);
+            }
+            
+            textDiv.appendChild(document.createTextNode(text));
+            messageDiv.appendChild(textDiv);
+            
+            if (audioFile) {
+                const audioContainer = document.createElement('div');
+                audioContainer.className = 'audio-control';
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.style.width = '100%';
+                if (type === 'avatar') {
+                    audio.src = '/audio/' + audioFile;
+                } else {
+                    audio.src = '/recordings/' + candidateId + '/' + audioFile;
+                }
+                audioContainer.appendChild(audio);
+                messageDiv.appendChild(audioContainer);
+                
+                if (type === 'avatar' && autoPlay) {
+                    setTimeout(() => playAvatarAudio(audio, messageDiv, autoRecord), 300);
+                }
+            }
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = timestamp || new Date().toLocaleTimeString();
+            messageDiv.appendChild(timeDiv);
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return messageDiv;
+        }
+        
+        function playAvatarAudio(audioElement, messageDiv, autoRecord) {
+            if (interviewCompleted) return;
+            
+            stopCurrentAudio();
+            currentPlayingAudio = audioElement;
+            const indicator = messageDiv.querySelector('.playing-indicator');
+            if (indicator) {
+                indicator.style.background = '#28a745';
+                indicator.title = 'Воспроизводится';
+            }
+            
+            audioElement.play().catch(error => {
+                console.log('Автовоспроизведение заблокировано:', error);
+                if (indicator) {
+                    indicator.style.background = '#dc3545';
+                    indicator.style.cursor = 'pointer';
+                    indicator.title = 'Нажмите для воспроизведения';
+                    indicator.onclick = () => {
+                        audioElement.play();
+                        indicator.style.background = '#28a745';
+                        indicator.title = 'Воспроизводится';
+                    };
+                }
+            });
+            
+            audioElement.onended = () => {
+                if (indicator) {
+                    indicator.style.background = '#ffd43b';
+                    indicator.title = 'Воспроизведение завершено';
+                }
+                currentPlayingAudio = null;
+                
+                // Автоматически запускаем запись после завершения воспроизведения
+                if (autoRecord && !isAutoRecording && !interviewCompleted) {
+                    setTimeout(() => {
+                        startRecording();
+                        addSystemMessage('Автоматическая запись запущена');
+                    }, 500);
+                }
+            };
+        }
+        
+        function addSystemMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system-message';
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = text;
+            messageDiv.appendChild(textDiv);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        async function startRecording() {
+            if (interviewCompleted) return;
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: { channelCount: 1, sampleRate: 16000, sampleSize: 16, echoCancellation: true, noiseSuppression: true } 
+                });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+                audioChunks = [];
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) audioChunks.push(event.data);
+                };
+                mediaRecorder.start(1000);
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                isAutoRecording = true;
+                updateStatus('Запись...', 'recording');
+                addSystemMessage('Запись начата');
+            } catch (error) {
+                console.error('Ошибка доступа к микрофону:', error);
+                addSystemMessage('Ошибка доступа к микрофону');
+                updateStatus('Ошибка', 'disconnected');
+            }
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                mediaRecorder.onstop = async () => {
+                    if (audioChunks.length > 0) {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            try {
+                                const arrayBuffer = await audioBlob.arrayBuffer();
+                                ws.send(arrayBuffer);
+                                addSystemMessage('Аудио отправлено');
+                            } catch (error) {
+                                console.error('Ошибка отправки аудио:', error);
+                                addSystemMessage('Ошибка отправки аудио');
+                            }
+                        } else {
+                            addSystemMessage('Нет подключения к серверу');
+                        }
+                    }
+                };
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                isAutoRecording = false;
+                updateStatus('Подключено', 'connected');
+                addSystemMessage('Запись остановлена');
+            }
+        }
+        
+        function connectWebSocket() {
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const host = window.location.host;
+                ws = new WebSocket(`${protocol}//${host}/ws/interview/${candidateId}`);
+                ws.onopen = () => {
+                    updateStatus('Подключено', 'connected');
+                    connectBtn.disabled = true;
+                    connectBtn.textContent = 'Подключено';
+                    startBtn.disabled = false;
+                    endBtn.disabled = false;
+                    userInfo.textContent = 'ID: ' + candidateId;
+                    addSystemMessage('Подключено к серверу');
+                };
+                ws.onmessage = (event) => {
+                    try {
+                        if (typeof event.data === 'string') {
+                            const data = JSON.parse(event.data);
+                            if (data.type === 'history') {
+                                if (data.messages && data.messages.length > 0) {
+                                    data.messages.forEach(msg => {
+                                        addMessage(
+                                            msg.text || (msg.type === 'user' ? 'Аудиосообщение' : 'Ответ аватара'),
+                                            msg.type,
+                                            msg.audio_file,
+                                            new Date(msg.timestamp).toLocaleTimeString(),
+                                            false,
+                                            msg.auto_record || false
+                                        );
+                                    });
+                                    addSystemMessage(`Загружено ${data.messages.length} сообщений`);
+                                }
+                            } else if (data.type === 'avatar') {
+                                addMessage(
+                                    data.text, 
+                                    'avatar', 
+                                    data.audio_file, 
+                                    new Date(data.timestamp).toLocaleTimeString(), 
+                                    data.auto_play || false,
+                                    data.auto_record || false
+                                );
+                            } else if (data.type === 'user') {
+                                addMessage(
+                                    'Аудиосообщение', 
+                                    'user', 
+                                    data.audio_file, 
+                                    new Date(data.timestamp).toLocaleTimeString(), 
+                                    false,
+                                    false
+                                );
+                            } else if (data.type === 'system') {
+                                addSystemMessage(data.message);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Ошибка обработки сообщения:', e);
+                    }
+                };
+                ws.onclose = () => {
+                    updateStatus('Отключено', 'disconnected');
+                    connectBtn.disabled = false;
+                    connectBtn.textContent = 'Подключиться';
+                    startBtn.disabled = true;
+                    stopBtn.disabled = true;
+                    endBtn.disabled = true;
+                    addSystemMessage('Соединение закрыто');
+                };
+                ws.onerror = (error) => {
+                    updateStatus('Ошибка', 'disconnected');
+                    addSystemMessage('Ошибка соединения');
+                    console.error('WebSocket error:', error);
+                };
+            } catch (error) {
+                addSystemMessage('Ошибка создания подключения');
+                updateStatus('Ошибка', 'disconnected');
+            }
+        }
+        
+        function showEndInterviewModal() {
+            confirmModal.classList.remove('hidden');
+        }
+        
+        function hideEndInterviewModal() {
+            confirmModal.classList.add('hidden');
+        }
+        
+        function showSuccessModal() {
+            successModal.classList.remove('hidden');
+        }
+        
+        function hideSuccessModal() {
+            successModal.classList.add('hidden');
+        }
+        
+        function endInterview() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'end_interview'
+                }));
+                interviewCompleted = true;
+                hideEndInterviewModal();
+                showSuccessModal();
+                endBtn.disabled = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = true;
+                
+                // Останавливаем запись, если она активна
+                if (isAutoRecording) {
+                    stopRecording();
+                }
+                
+                addSystemMessage('Интервью завершено. Микрофон отключен.');
+                updateStatus('Завершено', 'disconnected');
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            addSystemMessage('Добро пожаловать! Нажмите "Подключиться" чтобы начать.');
+        });
+    </script>
+</body>
+</html>

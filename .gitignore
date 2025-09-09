@@ -1,0 +1,13 @@
+# Модели и большие файлы
+*.pth
+*.pt
+*.bin
+*.h5
+*.weights
+*.onnx
+*.joblib
+*.data
+*.index
+*.meta
+*.data-00000-of-00001
+__pycache__

@@ -18,11 +18,25 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"\n\n{device}")
 
+# # Install latest bitsandbytes & transformers, accelerate from source
+# !pip install -q -U bitsandbytes
+# !pip install -q -U git+https://github.com/huggingface/transformers.git
+# !pip install -q -U git+https://github.com/huggingface/peft.git
+# !pip install -q -U git+https://github.com/huggingface/accelerate.git
+# # Other requirements for the demo
+# !pip install gradio
+# !pip install sentencepiece
+
+# !pip uninstall -y transformers peft accelerate
+# !pip install -q transformers==4.44.2 peft==0.11.1 accelerate==0.33.0 sentence-transformers striprtf python-docx mammoth
+
+# !pip install python-docx
+
 # === Импорты ===
 import docx
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-model_path="/kaggle/input/my_model/pytorch/default/7"
+model_path="./VTB hackaton/kagglehub/models/nikolayposrednikov/my_model/pytorch/default/7"
 
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
@@ -142,24 +156,25 @@ class ChatEngine:
 
         self.chat_history.append(("HR", question))
         return question
-
+    
 # === загрузка кандидата ===
 """vec_path = "/kaggle/input/candidats-vectors/Resume 2 Specialist IT.docx.npy"
 candidate_vector = np.load(vec_path)
 vector_text = " ".join([f"{x:.4f}" for x in candidate_vector[:50]])"""
 
-with open("/kaggle/input/candidats-summary/Resume 2 Specialist IT_summary.txt", "r", encoding="utf-8") as file:
+with open("./VTB hackaton/kaggle/input/candidats-summary/Resume 2 Specialist IT_summary.txt", "r", encoding="utf-8") as file:
     candidate_vector = file.readlines() 
 candidate_vector = "".join([i for i in candidate_vector[1:]])
 print(candidate_vector)
 # === загрузка вакансии ===
-job_doc_path = "/kaggle/input/for-llama/Description of Specialist IT.docx"
+job_doc_path = "./VTB hackaton/kaggle/input/for-llama/Description of Specialist IT.docx"
 doc = docx.Document(job_doc_path)
 job_description = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
 
-
 # === инициализация ===
-engine = ChatEngine(model, tokenizer, job_description, candidate_vector)
+# engine = ChatEngine(model, tokenizer, job_description, candidate_vector)
+engine = ChatEngine(model, tokenizer, job_description, candidate_vector, device="cpu")
+
 
 # старт интервью
 engine.chat_history.append(("HR", "Здравствуйте! Давайте начнём собеседование."))
@@ -176,5 +191,4 @@ print("\nСледующий вопрос:\n", q2)
 # ещё ответ
 q3 = engine.chat("Также занимался первичной диагностикой серверов х86 и настройкой RAID.")
 print("\nСледующий вопрос:\n", q3)
-
 
